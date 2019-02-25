@@ -1,0 +1,32 @@
+*,:before,:after {
+  box-sizing: border-box;
+}
+
+@import "~td-ui/lib/style/themes/default.less";
+@import "default.less";
+
+.@{prefix} {
+  &-header {
+    background: currentColor;
+  }
+
+  &-sidebar {
+    background: #404040;
+  }
+
+  &-content {
+    padding: 20px;
+    background: #fff;
+
+    &-title {
+      color: @primary-5;
+      border-left: 5px solid @primary-5;
+      padding-left: 10px;
+      margin-bottom: 20px;
+    }
+  }
+  &-footer {
+    background: #404040;
+    
+  }
+}

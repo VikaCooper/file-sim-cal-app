@@ -1,0 +1,30 @@
+{
+  "name": "file-sim-front",
+  "version": "0.1.0",
+  "description": "File similarity calculation.",
+  "author": "cooper",
+  "license": "MIT",
+  "scripts": {
+    "start": "export NODE_ENV=development && tdtool start",
+    "release": "export NODE_ENV=production && tdtool build",
+    "release:watch": "export NODE_ENV=production && tdtool build --watch"
+  },
+  "devDependencies": {
+    "clean-webpack-plugin": "^0.1.17",
+    "copy-webpack-plugin": "^4.2.3",
+    "tdtool": "^1.0.4",
+    "tdtool-less": "^1.0.1",
+    "tdtool-react": "^1.0.1"
+  },
+  "dependencies": {
+    "mobx": "^5.0.3",
+    "mobx-react": "^5.2.3",
+    "react": "^16.4.1",
+    "react-dom": "^16.4.1",
+    "react-loadable": "^5.4.0",
+    "react-router-dom": "^4.3.1",
+    "td-react-vendor": "^1.1.0",
+    "td-ui": "^2.3.0",
+    "whatwg-fetch": "^2.0.3"
+  }
+}

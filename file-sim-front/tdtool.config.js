@@ -47,7 +47,7 @@ const clientConfig = new Config({
     hot: true,
     disableHostCheck: true,
     proxy: {
-      '**': 'http://interface.tongdun.me:3000/td_app'    // 接口代理，默认转接到TDIM上，实际项目中转到指定后台
+      '**': 'http://localhost:5000'    // 接口代理，默认转接到TDIM上，实际项目中转到指定后台
     }
   }
 });

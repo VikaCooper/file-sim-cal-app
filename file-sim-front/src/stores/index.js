@@ -1,5 +1,5 @@
 import { Get } from '../fetchHandler';
-import { observable, action, computed, extendObservable } from 'mobx';
+import { observable, action, computed, extendObservable, get } from 'mobx';
 import omit from 'lodash/omit';
 
 /**
@@ -12,9 +12,25 @@ export class GlobalStore {
   @observable loading = false; // 加载状态，加observable修饰表示此属性值的变化会引起页面的更新
   @observable userName;
   @observable realName;
+  @observable currLocation='homepage';
 
-  constructor() {
-    this.init();
+
+  @action 
+  getCurrLocation(){
+    this.currLocation=window.location.hash.split('/')[1];
+  }
+  @action
+  async testAPI(){
+    const url = '/test';
+    try{
+      const res = await Get(url);
+      console.log('res.message: ',res.data);
+      return res.data;
+    }
+    catch(e){
+      console.log('error occured!');
+      return false;
+    }
   }
 
   static getInstance() { // 单例模式
@@ -22,18 +38,6 @@ export class GlobalStore {
       GlobalStore.instance = new GlobalStore();
     }
     return GlobalStore.instance;
-  }
-
-  @action async init() {
-    this.setLoading(true);
-    try {
-      const res = await Get('/init');  // 初始化接口，默认转接到interface.tongdun.me:3000/${appName}上
-      this.setUserName(res.userName);
-      this.setRealName(res.realName);
-    } catch(e) {
-      console.log(e);
-    }
-    this.setLoading(false);
   }
 
   @action setLoading(loading) {

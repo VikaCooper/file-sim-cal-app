@@ -23,6 +23,50 @@ export default class Content extends React.PureComponent {
             return <LazyRoute {...props} />
           }}
         />
+        <Route
+          exact
+          path="/tooluse"
+          render={props => {
+            const LazyRoute = Loadable({
+              loader: () => import("../pages/toolUse"),
+              loading: () => null,
+            })
+            return <LazyRoute {...props} />
+          }}
+        />
+        <Route
+          exact
+          path="/quicklearn"
+          render={props => {
+            const LazyRoute = Loadable({
+              loader: () => import("../pages/quicklearn"),
+              loading: () => null,
+            })
+            return <LazyRoute {...props} />
+          }}
+        />
+        <Route
+          exact
+          path="/updatelog"
+          render={props => {
+            const LazyRoute = Loadable({
+              loader: () => import("../pages/updatelog"),
+              loading: () => null,
+            })
+            return <LazyRoute {...props} />
+          }}
+        />
+        <Route
+          exact
+          path="/tooldetail"
+          render={props => {
+            const LazyRoute = Loadable({
+              loader: () => import("../pages/tooldetail"),
+              loading: () => null,
+            })
+            return <LazyRoute {...props} />
+          }}
+        />
       </Layout.Content>
     );
   }

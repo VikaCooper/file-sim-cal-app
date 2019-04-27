@@ -21,6 +21,10 @@ const { Sider } = Layout;
  */
 @inject('globalStore') // 注入globalStore到本组件，可选store为main.js中注入的stores
 class App extends Component {
+  constructor(props){
+    super(props)
+    this.props.globalStore.testAPI();
+  }
   render() {
     const { globalStore } = this.props;
     const { loading } = globalStore;
@@ -33,10 +37,10 @@ class App extends Component {
               <Sidebar />
             </Sider> */}
             <Layout>
-              <Content />
+              <Content/>
             </Layout>
           </Layout>
-          {/* <Layout><Footer /></Layout> */}
+          {/* <Footer /> */}
         </Layout>
       </Loading>
     );

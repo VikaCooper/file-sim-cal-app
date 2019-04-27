@@ -4,7 +4,11 @@ import { Card, Button, Row, Col } from 'td-ui';
 import { Link, withRouter } from 'react-router-dom';
 import '../styles/controllers.css';
 
+@inject('globalStore')
 class Homepage extends Component {
+    componentWillMount(){
+        this.props.globalStore.getCurrLocation();
+    }
     render(){
         return <div>
             <div className={'jumbotron'}>
@@ -14,23 +18,23 @@ class Homepage extends Component {
                     此工具简单易用好上手，仅需几分钟即可得到您想要的结果。
                 </p>
                 <p>
-                    <Button type="primary"><Link to='/'>开始使用</Link></Button>
+                    <Button type="primary"><Link to='/tooluse'>开始使用</Link></Button>
                 </p>
             </div>
             <div>
                 <Row justify="space-around" type="flex">
                     <Col span={6}>
-                        <Card title={'快速上手'}>
-                            教您如何在5分钟内学会简单的使用此工具。
+                        <Card hoverable title={'快速上手'} extra={<div><Link to='/quicklearn'>了解更多</Link></div>}>
+                            <div>教您如何在5分钟内学会简单的使用此工具。</div>
                         </Card>
                     </Col>
                     <Col span={6}>
-                        <Card title={'更新日志'}>
+                        <Card hoverable title={'更新日志'} extra={<div><Link to='/updatelog'>了解更多</Link></div>}>
                             最近一次更新: {Date()}
                         </Card>
                     </Col>
                     <Col span={6}>
-                        <Card title={'详细帮助'}>
+                        <Card hoverable title={'工具详情'} extra={<div><Link to='/tooldetail'>了解更多</Link></div>}>
                             向您介绍此工具涉及到的技术及原理，让您深入了解并掌握此工具的使用方法。
                         </Card>
                     </Col>

@@ -1,0 +1,15 @@
+.box{
+    position: absolute;
+    left: 35.5%;
+    top: 125%;
+    border-radius: 15px;
+    background-color: whitesmoke;
+    width: 400px;
+    height: 300px;
+    opacity: 0.8;
+}
+.form-ctr{
+    position: relative;
+    left: 25%;
+    top: 13%;
+}

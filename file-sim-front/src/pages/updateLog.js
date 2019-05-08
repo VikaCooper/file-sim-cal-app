@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { inject } from 'utils/mobx-react';
-import { Card, Button, Row, Col, Form, Input, InputNumber, Upload } from 'td-ui';
 import { Link, withRouter } from 'react-router-dom';
+import { Timeline } from 'td-ui';
 import '../styles/controllers.css';
 
 @inject('globalStore')
@@ -14,7 +14,20 @@ class UpdateLog extends Component {
     }
     render(){
         return <div>
-            hello
+            <Timeline>
+                <Timeline.Item>
+                    Compelete
+                </Timeline.Item>
+                <Timeline.Item>
+                    2019-3-27 更新
+                </Timeline.Item>
+                <Timeline.Item>
+                    2019-2-25 更新
+                </Timeline.Item>
+                <Timeline.Item>
+                    2018-12-01 创建项目
+                </Timeline.Item>
+            </Timeline>
         </div>
     }
 }

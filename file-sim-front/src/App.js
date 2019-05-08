@@ -23,7 +23,6 @@ const { Sider } = Layout;
 class App extends Component {
   constructor(props){
     super(props)
-    this.props.globalStore.testAPI();
   }
   render() {
     const { globalStore } = this.props;

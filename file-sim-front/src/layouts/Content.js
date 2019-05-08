@@ -67,6 +67,17 @@ export default class Content extends React.PureComponent {
             return <LazyRoute {...props} />
           }}
         />
+        <Route
+        exact
+        path="/loggin"
+        render={props => {
+          const LazyRoute = Loadable({
+            loader: () => import("../pages/loggin"),
+            loading: () => null,
+          })
+          return <LazyRoute {...props} />
+        }}
+      />
       </Layout.Content>
     );
   }

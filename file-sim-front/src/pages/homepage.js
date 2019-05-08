@@ -12,7 +12,7 @@ class Homepage extends Component {
     render(){
         return <div>
             <div className={'jumbotron'}>
-                <h1>欢迎使用文本查重工具!</h1>
+                <h1>欢迎使用文档查重工具!</h1>
                 <p>
                     在此，您可以查询并计算出存疑的文档之间的相似度，您可以根据结果来判断是否为问题文档。
                     此工具简单易用好上手，仅需几分钟即可得到您想要的结果。

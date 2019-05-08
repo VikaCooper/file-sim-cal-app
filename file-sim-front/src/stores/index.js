@@ -1,6 +1,7 @@
 import { Get } from '../fetchHandler';
 import { observable, action, computed, extendObservable, get } from 'mobx';
 import omit from 'lodash/omit';
+import { message } from 'td-ui';
 
 /**
  * 全局store
@@ -25,6 +26,7 @@ export class GlobalStore {
     try{
       const res = await Get(url);
       console.log('res.message: ',res.data);
+      message.info('server connected ok!');
       return res.data;
     }
     catch(e){

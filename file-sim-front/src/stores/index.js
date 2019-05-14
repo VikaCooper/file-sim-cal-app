@@ -60,6 +60,12 @@ export class GlobalStore {
         try {
             const res = await PostJson(url, userInput);
             console.log(res.result);
+            message.info('注册成功！2秒后刷新页面...');
+
+            if (res.result)
+                setTimeout(()=>{
+                    window.location.reload();
+                },2000);
 
         }catch (e){
             return false;

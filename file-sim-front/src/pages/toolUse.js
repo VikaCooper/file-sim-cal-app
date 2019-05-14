@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { inject } from 'utils/mobx-react';
 import { Select, Button, Row, Col, Form, Input, InputNumber, Upload } from 'td-ui';
 import { Link, withRouter } from 'react-router-dom';
+import { toJS } from 'mobx';
 import '../styles/controllers.css';
 
 const FormItem = Form.Item;
@@ -9,26 +10,24 @@ const FormControl = Form.Control;
 
 const selectBefore = (
     <Select defaultValue="student_id" style={{ width: 150 }}>
-      <Option value="student_id">student_id</Option>
-      <Option value="id_number">id_number</Option>
-      <Option value="phone_number">phone_number</Option>
+      <Select.Option value="student_id">student_id</Select.Option>
+      <Select.Option value="id_number">id_number</Select.Option>
+      <Select.Option value="phone_number">phone_number</Select.Option>
     </Select>
   );
 
 @Form.create()
-@inject('globalStore')
+@inject('globalStore','toolUseStore')
 class ToolUse extends Component {
     constructor(props){
         super(props);
-        this.state={
-            fileList: []
-        }
     }
     componentWillMount(){
         this.props.globalStore.getCurrLocation();
     }
     
     render(){
+        const {toolUseStore} = this.props;
         return <div style={{
             margin: '0 10%', textAlign: 'center'
         }}>
@@ -64,11 +63,10 @@ class ToolUse extends Component {
                         <Upload accept={["zip","rar","gzip"]}
                             note='选择需要上传的压缩包'
                             showType="name"
-                            fileList={this.state.fileList}
+                            fileList={toolUseStore.fileList}
                             onChange={(file)=>{
-                                this.setState({
-                                    fileList: file
-                                })
+                                toolUseStore.fileList = file;
+                                toolUseStore.uploadFile();
                             }}
                             showProgress={true}
                         />

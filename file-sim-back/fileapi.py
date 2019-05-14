@@ -57,5 +57,17 @@ def create_account():
 
             )
 
+
+@app.route('/uploadFile', methods=['GET', 'POST'])
+def upload_file():
+    if request.method == 'POST':
+        file = request.files['file']
+        print(file)
+        return jsonify(
+            message='ok',
+            data='ok'
+        )
+
+
 if __name__ == "__main__":
     app.run(debug=True)

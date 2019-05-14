@@ -54,6 +54,17 @@ export class GlobalStore {
             return false;
         }
     }
+    @action
+    async createAccount(userInput) {
+        const url = '/createAccount';
+        try {
+            const res = await PostJson(url, userInput);
+            console.log(res.result);
+
+        }catch (e){
+            return false;
+        }
+    }
 
     static getInstance() { // 单例模式
         if (!GlobalStore.instance) {

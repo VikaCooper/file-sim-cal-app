@@ -45,6 +45,16 @@ class Loggin extends Component {
 
 
                             }}>登录</Button>
+                            <Button onClick={()=>{
+                                this.props.form.validateFields(
+                                    ['username', 'password'], (errors, values) => {
+                                        if (!errors) {
+                                            console.log(values);
+                                            globalStore.createAccount(values);
+                                        }
+                                    }
+                                );
+                            }}>注册</Button>
                             <a style={{marginLeft: 63}}>忘记密码？</a>
                         </FormItem>
                     </Form>

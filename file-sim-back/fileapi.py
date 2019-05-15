@@ -2,6 +2,7 @@ from flask import Flask, jsonify
 from flask import request
 import json
 import dboperations
+import os
 
 app = Flask(__name__)
 
@@ -61,11 +62,19 @@ def create_account():
 @app.route('/uploadFile', methods=['GET', 'POST'])
 def upload_file():
     if request.method == 'POST':
-        file = request.files['file']
-        print(file)
+        if 'file1' not in request.files:
+            print('cannot find file')
+            return jsonify(
+                message='找不到文件',
+                data='文件上传失败',
+                result=False
+            )
+        file = request.files['file1']
+        file.save('./upload/tmp/compressed/'+file.filename)
         return jsonify(
-            message='ok',
-            data='ok'
+            message='文件上传成功',
+            data='文件上传成功',
+            result=True
         )
 
 

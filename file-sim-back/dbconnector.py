@@ -15,7 +15,3 @@ def connect_db():
 
 def close_db(conn):
     conn.close()
-
-
-
-connect_db()

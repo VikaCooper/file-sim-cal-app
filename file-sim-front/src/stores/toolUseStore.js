@@ -9,9 +9,11 @@ class toolUseStore{
 
     @action
     async uploadFile(){
-        const url = '/uploadFile/';
+        const url = '/uploadFile';
         try{
-            const res = await upload(url, this.fileList);
+            let formData = new FormData();
+            formData.append('file1', this.fileList);
+            const res = await upload(url, formData);
             console.log(res.result);
         }catch (e){
             return false;

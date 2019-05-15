@@ -1,20 +1,12 @@
 import React, { Component } from 'react';
 import { inject } from 'utils/mobx-react';
-import { Select, Button, Row, Col, Form, Input, InputNumber, Upload } from 'td-ui';
-import { Link, withRouter } from 'react-router-dom';
-import { toJS } from 'mobx';
+import { Button, Row, Form, Input, Upload } from 'td-ui';
+import { withRouter } from 'react-router-dom';
 import '../styles/controllers.css';
 
 const FormItem = Form.Item;
 const FormControl = Form.Control;
 
-const selectBefore = (
-    <Select defaultValue="student_id" style={{ width: 150 }}>
-      <Select.Option value="student_id">student_id</Select.Option>
-      <Select.Option value="id_number">id_number</Select.Option>
-      <Select.Option value="phone_number">phone_number</Select.Option>
-    </Select>
-  );
 
 @Form.create()
 @inject('globalStore','toolUseStore')
@@ -49,7 +41,7 @@ class ToolUse extends Component {
                         required: true,
                         message: '主题名称为必填项！'
                     }]} name="theme">
-                        <Input addonBefore={selectBefore} placeholder="请输入本类文档的主题，3-10字"/>
+                        <Input placeholder="请输入本类文档的主题，3-10字"/>
                     </FormControl>
                 </FormItem>
 
@@ -64,10 +56,9 @@ class ToolUse extends Component {
                             note='选择需要上传的压缩包'
                             showType="name"
                             fileList={toolUseStore.fileList}
-                            onChange={(file)=>{
-                                toolUseStore.fileList = file;
-                                toolUseStore.uploadFile();
-                            }}
+                                onChange={(file)=>{
+                                    toolUseStore.fileList = file;
+                                }}
                             showProgress={true}
                         />
                     </FormControl>
@@ -76,8 +67,12 @@ class ToolUse extends Component {
             <Row type={'flex'} justify={'center'}>
                 <Button type='primary' style={{marginRight: '20px'}} onClick={()=>{
                     this.props.form.validateFields((errors, values)=>{
-                        if(!errors)
-                            console.log('success');
+                        if(!errors){
+                            toolUseStore.uploadFile();
+                            toolUseStore.getFileList(toolUseStore.fileList.name, values.theme);
+                            window.location.href = '/#/resultPage';
+                        }
+
                     })
                 }}>确认提交</Button>
                 <Button type='warning' onClick={

@@ -6,6 +6,9 @@ import {message} from 'td-ui';
 class toolUseStore{
     static namespace = 'toolUseStore';
     @observable fileList={};
+    @observable selectedBefore;
+
+    @observable columnList = [];
 
     @action
     async uploadFile(){
@@ -14,7 +17,18 @@ class toolUseStore{
             let formData = new FormData();
             formData.append('file1', this.fileList);
             const res = await upload(url, formData);
-            console.log(res.result);
+            message.info(res.message);
+            return res.result;
+        }catch (e){
+            return false;
+        }
+    }
+    @action
+    async getFileList(filename, theme){
+        const url = '/getFileList/'+filename+'&'+theme;
+        try {
+            const res = await Get(url);
+            console.log(res.data);
         }catch (e){
             return false;
         }

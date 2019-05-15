@@ -2,7 +2,7 @@ from flask import Flask, jsonify
 from flask import request
 import json
 import dboperations
-import os
+import fileHandler
 
 app = Flask(__name__)
 
@@ -70,11 +70,20 @@ def upload_file():
                 result=False
             )
         file = request.files['file1']
-        file.save('./upload/tmp/compressed/'+file.filename)
+        file.save('./upload/tmp/compressed/' + file.filename)
         return jsonify(
             message='文件上传成功',
             data='文件上传成功',
             result=True
+        )
+
+
+@app.route('/getFileList/<filename>&<theme>', methods=['POST', 'GET'])
+def cal_file_sim(filename, theme):
+    if request.method == 'GET':
+        file_list=fileHandler.zip_reader('./upload/tmp/compressed/'+filename, theme)
+        return jsonify(
+            data=file_list
         )
 
 

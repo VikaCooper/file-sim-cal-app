@@ -20,6 +20,7 @@ export default class Header extends Component {
           <Menu.Item key='updatelog'><Link className={'link-control'} to='/updatelog'>更新日志</Link></Menu.Item>
           <Menu.Item key='tooldetail'><Link className={'link-control'} to='/tooldetail'>工具详情</Link></Menu.Item>
           <Menu.Item key='loggin' className={'loggin'}><Link className={'link-control'} to='/loggin'>登录</Link></Menu.Item>
+          <Menu.Item key='historySearch' className={'loggin'}><Link className={'link-control'} to='/historySearch'>历史记录</Link></Menu.Item>
         </Menu>
       </Layout.Header>
     );

@@ -89,6 +89,17 @@ export default class Content extends React.PureComponent {
                         return <LazyRoute {...props} />
                     }}
                 />
+                <Route
+                    exact
+                    path="/historysearch"
+                    render={props => {
+                        const LazyRoute = Loadable({
+                            loader: () => import("../pages/historySearch"),
+                            loading: () => null,
+                        })
+                        return <LazyRoute {...props} />
+                    }}
+                />
             </Layout.Content>
         );
     }

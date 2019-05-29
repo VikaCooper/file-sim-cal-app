@@ -14,6 +14,8 @@ class UpdateLog extends Component {
     }
     render(){
         return <div>
+            <header style={{fontWeight: 'bold', fontSize: '1.3em', marginBottom: '2%'}}>更新日志</header>
+
             <Timeline>
                 <Timeline.Item>
                     Compelete

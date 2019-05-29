@@ -81,7 +81,7 @@ def upload_file():
 @app.route('/getFileList/<filename>&<theme>', methods=['POST', 'GET'])
 def cal_file_sim(filename, theme):
     if request.method == 'GET':
-        file_list=fileHandler.zip_reader('./upload/tmp/compressed/'+filename, theme)
+        file_list = fileHandler.zip_reader('./upload/tmp/compressed/' + filename, theme)
         return jsonify(
             data=file_list
         )

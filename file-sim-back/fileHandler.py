@@ -63,7 +63,11 @@ def cal_process(file_cut):
     lda_result = result_format(file_cut, cal_sim_by_lda(corpus_tfidf, dictionary, corpus))
     print(lda_result)
 
-    return [vsm_result, lsi_result, lda_result]
+    return [
+        {'vsm': vsm_result},
+        {'lsi': lsi_result},
+        {'lda': lda_result}
+    ]
 
 
 ############################

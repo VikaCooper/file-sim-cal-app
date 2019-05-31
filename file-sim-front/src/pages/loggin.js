@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {inject} from 'utils/mobx-react';
-import {Form, Input, Icon, Button, Tabs} from 'td-ui';
+import {Form, Input, Icon, Button, Tabs, Select} from 'td-ui';
 import {Link, withRouter} from 'react-router-dom';
 import '../styles/loggin.css';
 
@@ -54,11 +54,23 @@ class Loggin extends Component {
                                     <Input prefix={<Icon type='login'/>} type='password'/>
                                 </FormControl>
                             </FormItem>
+                            <FormItem label={'用户类型'} required
+                            >
+                                <FormControl name={'usertype'}
+                                >
+                                    <Select placeholder = '请选择身份类型' style = {{width: 100}}>
+                                        <Select.Option value = 's'>学生</Select.Option>
+                                        <Select.Option value = 't'>教师</Select.Option>
+                                    </Select>
+                                </FormControl>
+                            </FormItem>
 
                             <FormItem label={null}>
-                                <Button type='primary' onClick={() => {
+                                <Button type='primary'
+                                        loading = {globalStore.loading}
+                                        onClick={() => {
                                     this.props.form.validateFields(
-                                        ['username', 'password'], (errors, values) => {
+                                        ['username', 'password','usertype'], (errors, values) => {
                                             if (!errors) {
                                                 globalStore.logIn(values);
                                             }
@@ -103,11 +115,21 @@ class Loggin extends Component {
                                     <Input prefix={<Icon type='login'/>} type='password'/>
                                 </FormControl>
                             </FormItem>
+                            <FormItem label={'用户类型'} required
+                            >
+                                <FormControl name={'usertype'}
+                                >
+                                    <Select placeholder = '请选择身份类型' style = {{width: 100}}>
+                                        <Select.Option value = 's'>学生</Select.Option>
+                                        <Select.Option value = 't'>教师</Select.Option>
+                                    </Select>
+                                </FormControl>
+                            </FormItem>
 
                             <FormItem label={null}>
                                 <Button onClick={() => {
                                     this.props.form.validateFields(
-                                        ['username', 'password'], (errors, values) => {
+                                        ['username', 'password', 'usertype'], (errors, values) => {
                                             if (!errors) {
                                                 globalStore.createAccount(values);
                                             }

@@ -1,16 +1,19 @@
 from flask import Flask, jsonify
-from flask import request
+from flask import request, session
 import json
 import dboperations
 import fileHandler
 import os
 import jieba
 
+
 PREFIX_COMPRESSED_PATH = './upload/tmp/compressed/'
 PREFIX_UNCOMPRESSED_PATH = './upload/tmp/uncompressed/'
 
 app = Flask(__name__)
 global file_cut
+user_name= ''
+user_type=''
 
 
 @app.route('/test')
@@ -26,6 +29,14 @@ def log_in():
     if request.method == 'POST':
         json_data = json.loads(request.get_data().decode("utf-8"))
         result = dboperations.log_in_data(json_data)
+        session['username'] = json_data.get('username')
+        session['usertype'] = json_data.get('usertype')
+        global user_name
+        global user_type
+        user_name = session['username']
+        user_type = session['usertype']
+
+        print(json_data)
 
         if result:
             return jsonify(
@@ -40,8 +51,18 @@ def log_in():
                 result=False
 
             )
-    else:
-        pass
+
+
+@app.route('/logout', methods=['GET', 'POST'])
+def log_out():
+    if request.method == 'GET':
+        session.pop('username')
+        session.pop('usertype')
+        return jsonify(
+            message='ok',
+            data='注销成功',
+            result=True
+        )
 
 
 @app.route('/createAccount', methods=['GET', 'POST'])
@@ -89,8 +110,9 @@ def cal_file_sim(filename, theme):
     if request.method == 'GET':
         try:
             file_cut = get_file_cut(filename, theme)
+            dboperations.file_cut_insert(file_cut)
             result = fileHandler.cal_api(file_cut)
-            print(result)
+            dboperations.result_insert(result)
             return jsonify(
                 message='计算成功',
                 data=result,
@@ -102,6 +124,8 @@ def cal_file_sim(filename, theme):
                 data='',
                 result=False
             )
+
+
 
 
 # 解压上传的文件
@@ -189,4 +213,5 @@ def get_file_cut(filename, theme):
 
 
 if __name__ == "__main__":
+    app.secret_key = '000000'
     app.run(debug=True)

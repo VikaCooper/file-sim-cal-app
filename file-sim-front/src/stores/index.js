@@ -11,7 +11,7 @@ export class GlobalStore {
     static instance = null;
 
     @observable loading = false; // 加载状态，加observable修饰表示此属性值的变化会引起页面的更新
-    @observable userName;
+    @observable username;
     @observable realName;
     @observable currLocation = 'homepage';
 
@@ -39,16 +39,48 @@ export class GlobalStore {
     @action
     async logIn(userInput) {
         const url = '/login';
+        this.loading = true;
+
         try {
             const res = await PostJson(url,userInput);
-            console.log(res);
             if(res.result){
                 message.info(res.data);
+                localStorage.setItem('username',userInput.username);
+                localStorage.setItem('usertype',userInput.usertype);
+                this.username = userInput.username;
+                setTimeout(()=>{
+                    window.location.href='#/homepage';
+                },2000);
             }
             else {
                 message.info(res.data);
             }
+            this.loading = false;
             return res.result;
+        }
+        catch (e) {
+            return false;
+        }
+    }
+    @action
+    async logOut() {
+        const url = '/logout';
+        this.loading = true;
+
+        try {
+            const res = await Get(url);
+            if(res.result){
+                message.info(res.data);
+                localStorage.removeItem('username');
+                localStorage.removeItem('usertype');
+                setTimeout(()=>{
+                    window.location.href='#/homepage';
+                },2000);
+            }
+            else {
+                message.info(res.data);
+            }
+            this.loading = false;
         }
         catch (e) {
             return false;

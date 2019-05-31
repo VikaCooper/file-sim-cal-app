@@ -3,8 +3,14 @@ from flask import request
 import json
 import dboperations
 import fileHandler
+import os
+import jieba
+
+PREFIX_COMPRESSED_PATH = './upload/tmp/compressed/'
+PREFIX_UNCOMPRESSED_PATH = './upload/tmp/uncompressed/'
 
 app = Flask(__name__)
+global file_cut
 
 
 @app.route('/test')
@@ -81,10 +87,105 @@ def upload_file():
 @app.route('/getFileList/<filename>&<theme>', methods=['POST', 'GET'])
 def cal_file_sim(filename, theme):
     if request.method == 'GET':
-        file_list = fileHandler.zip_reader('./upload/tmp/compressed/' + filename, theme)
-        return jsonify(
-            data=file_list
-        )
+        try:
+            file_cut = get_file_cut(filename, theme)
+            result = fileHandler.cal_api(file_cut)
+            print(result)
+            return jsonify(
+                message='计算成功',
+                data=result,
+                result=True
+            )
+        except Exception:
+            return jsonify(
+                message='计算失败',
+                data='',
+                result=False
+            )
+
+
+# 解压上传的文件
+def term_uncompress(file_path, theme):
+    os.system('unar -o ' + PREFIX_UNCOMPRESSED_PATH + ' ' + file_path)
+    return PREFIX_UNCOMPRESSED_PATH + theme
+
+
+# 修改文件名
+def modify_filename(path):
+    curr_path = os.getcwd()
+    os.chdir(path)
+    file_list = os.listdir()
+    for file in file_list:
+        file_cut = jieba.lcut(file, cut_all=False)
+        num = ''
+        for s in file_cut:
+            if s.isdigit() and len(s) > 10:
+                num = s
+        os.rename(file, num + file_cut[-2] + file_cut[-1])
+    os.chdir(curr_path)
+
+
+# 修改文件格式至txt
+def modify_doc2docx(path):
+    file_list = os.listdir(path)
+    curr_path = os.getcwd()
+    os.chdir(path)
+    for file in file_list:
+        if file.endswith('.doc'):
+            os.system('antiword ' + file + ' > ' + file[:-4] + '.txt')
+    for file in file_list:
+        if not file.endswith('.txt'):
+            os.remove(file)
+    os.chdir(curr_path)
+
+
+# 读取txt的内容
+def read_from_txt(path):
+    # get filenames in directory
+    files = os.listdir(path)
+    curr_path = os.getcwd()
+    os.chdir(path)
+    # iterate paths in files
+    file_list = []
+    for filename in files:
+        with open(filename) as f:
+            file_content = []
+            for line in f.readlines():
+                line = line.strip('\n')
+                line = line.strip(' ')
+                if line != '' and line != '\n':
+                    file_content.append(line)
+            file_list.append({'filename': filename, 'content': file_content})
+    os.chdir(curr_path)
+    return file_list
+
+
+# 对文档分词
+def cut_file(file_list):
+    # get stop words list
+    stop_words = open('stop_words.txt', 'r', encoding='utf-8').readlines()
+    stop_words = [w.strip() for w in stop_words]
+    file_cut = []
+    for file_dic in file_list:
+        result_list = []
+        if len(file_dic.get('content')) == 0:
+            pass
+        else:
+            doc_seg = jieba.cut(''.join(file_dic.get('content')), cut_all=False)
+            for word in doc_seg:
+                if word not in stop_words and word.isspace() is False:
+                    result_list.append(word)
+            file_cut.append({"filename": file_dic.get('filename'), "seg": result_list})
+    print(file_cut)
+    return file_cut
+
+
+def get_file_cut(filename, theme):
+    fp = term_uncompress(PREFIX_COMPRESSED_PATH + filename, theme)
+    modify_filename(fp)
+    modify_doc2docx(fp)
+    file_list = read_from_txt(fp)
+    return cut_file(file_list)
 
 
 if __name__ == "__main__":

@@ -1,7 +1,8 @@
 import React, {Component} from 'react';
 import {inject} from 'utils/mobx-react';
-import {Table, Row, Button} from 'td-ui';
+import {Table, Row, Button, Tabs} from 'td-ui';
 import {Link, withRouter} from 'react-router-dom';
+import {toJS} from 'mobx';
 import '../styles/controllers.css';
 
 @inject('toolUseStore')
@@ -10,39 +11,20 @@ class ResultPage extends Component {
         super(props)
     }
 
-    column = [
-        {
-            title: '1130123',
-            key: '1130123',
-            dataIndex: '1130123'
-        },
-        {
-            title: '11301232',
-            key: '11301232',
-            dataIndex: '11301232'
-        },
-        {
-            title: '11301233',
-            key: '11301234',
-            dataIndex: '11301235'
-        },
-        {
-            title: '11301236',
-            key: '11301236',
-            dataIndex: '11301236'
-        },
-        {
-            title: '113012362',
-            key: '113012362',
-            dataIndex: '113012362'
-        }
-    ];
+    // componentWillMount(){
+    //     const {toolUseStore} = this.props;
+    //     if(localStorage.getItem('vsm')){
+    //         toolUseStore.columnList = localStorage.getItem('vsm')[0];
+    //         toolUseStore.dataSource = localStorage.getItem('vsm')[1];
+    //     }
+    // }
 
     render() {
+        const {toolUseStore} = this.props;
         return (<div>
             <Row style={{margin: '0 0 5% 0'}}>
                 <header style={{fontWeight: 'bold', fontSize: '1.3em', marginBottom: '2%'}}>查重结果
-                 <span style={{float: 'right'}}>
+                    <span style={{float: 'right'}}>
                     <Button type="primary">下载结果</Button>
                 </span>
 
@@ -50,8 +32,28 @@ class ResultPage extends Component {
                 </header>
 
 
+                <Tabs>
+                    <Tabs.TabPane tab="VSM结果" key="vsm">
+                        <Table rowKey="key" columns={toJS(toolUseStore.columnList)}
+                               dataSource={toJS(toolUseStore.vsmSource)}
+                               scroll={{x: toolUseStore.flexScroll}}
+                               bordered={true}/>
+                    </Tabs.TabPane>
+                    <Tabs.TabPane tab="LSI结果" key="lsi">
+                        <Table rowKey="key" columns={toJS(toolUseStore.columnList)}
+                               dataSource={toJS(toolUseStore.lsiSource)}
+                               scroll={{x: toolUseStore.flexScroll}}
+                               bordered={true}/>
+                    </Tabs.TabPane>
+                    <Tabs.TabPane tab="LDA结果" key="lda">
+                        <Table rowKey="key" columns={toJS(toolUseStore.columnList)}
+                               dataSource={toJS(toolUseStore.ldaSource)}
+                               scroll={{x: toolUseStore.flexScroll}}
+                               bordered={true}/>
+                    </Tabs.TabPane>
+                </Tabs>
 
-                <Table rowKey="num" columns={this.column} bordered={true}/>
+
             </Row>
             <Row style={{margin: '0 0 5% 0'}}>
                 <header style={{fontWeight: 'bold', fontSize: '1.3em', marginBottom: '2%'}}>结果分析</header>

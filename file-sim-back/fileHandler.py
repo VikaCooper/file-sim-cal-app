@@ -1,4 +1,5 @@
 from gensim import corpora, models, similarities
+import xlwt
 
 
 ############################
@@ -51,6 +52,19 @@ def cal_sim_by_lda(tf_idf, dictionary, corpus):
     return index
 
 
+# 结果分析
+def result_analysis(vsm, lsi, lda):
+    result = []
+    for (x, y, z) in zip(vsm, lsi, lda):
+        key = list(x.keys())[0]
+        tmp_s = []
+        for (o, p, q) in zip(x[key], y[key], z[key]):
+            s = str(round((float(o) + float(p) + float(q)) / 3, 3))
+            tmp_s.append(s)
+        result.append({key: tmp_s})
+    return result
+
+
 def cal_process(file_cut):
     bag_words = bag_of_words(file_cut)
     corpus = bag_words[0]
@@ -63,10 +77,13 @@ def cal_process(file_cut):
     lda_result = result_format(file_cut, cal_sim_by_lda(corpus_tfidf, dictionary, corpus))
     print(lda_result)
 
+    result = result_analysis(vsm_result, lsi_result, lda_result)
+    print(result)
     return [
         {'vsm': vsm_result},
         {'lsi': lsi_result},
-        {'lda': lda_result}
+        {'lda': lda_result},
+        {'result': result}
     ]
 
 
@@ -84,10 +101,23 @@ def result_format(file_cut, result_list):
     for x, y in zip(st, result_list):
         tmp_y = []
         for a in list(y):
-            tmp_y.append(str(round(a,3)))
+            tmp_y.append(str(round(a, 3)))
         result.append({x: tmp_y})
     return result
 
+############################
+############################
+# 生成Excel文件
+############################
+############################
+
+# def write2excel(result):
+#     wb = xlwt.Workbook()
+#     vsm_sheet = wb.add_sheet('vsm')
+#     vsm_result = result[0].get('vsm')
+#     columns = []
+#     for vr in vsm_result:
+#         columns.append(list(vr.keys())[0])
 
 def cal_api(file_cut):
     return cal_process(file_cut)

@@ -3,6 +3,8 @@ import {observable, action, computed, extendObservable, get} from 'mobx';
 import omit from 'lodash/omit';
 import {message} from 'td-ui';
 import {toJS} from 'mobx';
+import React, {Component} from 'react';
+
 
 class toolUseStore {
     static namespace = 'toolUseStore';
@@ -15,6 +17,7 @@ class toolUseStore {
     @observable flexScroll = 0;
     @observable lsiSource = [];
     @observable ldaSource = [];
+    @observable resultSource =[];
 
     @action
     async uploadFile() {
@@ -34,6 +37,13 @@ class toolUseStore {
 
     @action
     async getFileList(filename, theme) {
+        this.resultData.clear();
+        this.vsmSource.clear();
+        this.columnList.clear();
+        this.lsiSource.clear();
+        this.ldaSource.clear();
+
+
         this.loading = true;
         const url = '/getFileList/' + filename + '&' + theme;
         try {
@@ -42,7 +52,7 @@ class toolUseStore {
             this.formatResultData();
             this.flexScroll = 150 * this.columnList.length;
 
-            this.loading = true;
+            this.loading = false;
         } catch (e) {
             return false;
         }
@@ -61,7 +71,19 @@ class toolUseStore {
                 return {
                     key: key,
                     dataIndex: key,
-                    title: key
+                    title: key,
+                    render: (text)=>{
+                        const value = parseFloat(text);
+                        if (value>0.5&&value<1){
+                            return <span style={{color: 'red'}}>{text}</span>
+                        }
+                        else if (value == 1){
+                            return <span style={{color: 'orange'}}>{text}</span>
+                        }
+                        else {
+                            return <span style={{color: 'green'}}>{text}</span>
+                        }
+                    }
                 }
             })
         );
@@ -103,9 +125,23 @@ class toolUseStore {
             return obj;
         });
 
+        this.resultSource = this.resultData[3].result.map(item => {
+            let obj = {};
+            for (let i = 0; i < this.columnList.length; i++) {
+                let item_key = Object.keys(item)[0];
+                if (i == 0) {
+                    obj.stno = item_key;
+                }
+                else obj[this.columnList[i].key] = item[item_key][i - 1];
+            }
+            return obj;
+        });
+
         localStorage.setItem('vsm', [toJS(this.columnList), toJS(this.vsmSource)]);
-        localStorage.setItem('vsm', [toJS(this.columnList), toJS(this.lsiSource)]);
-        localStorage.setItem('vsm', [toJS(this.columnList), toJS(this.ldaSource)]);
+        localStorage.setItem('lsi', [toJS(this.columnList), toJS(this.lsiSource)]);
+        localStorage.setItem('lda', [toJS(this.columnList), toJS(this.ldaSource)]);
+        localStorage.setItem('result', [toJS(this.columnList), toJS(this.ldaSource)]);
+
     }
 }
 

@@ -5,10 +5,13 @@ import dboperations
 import fileHandler
 import os
 import jieba
+import sys
 
 
 PREFIX_COMPRESSED_PATH = './upload/tmp/compressed/'
 PREFIX_UNCOMPRESSED_PATH = './upload/tmp/uncompressed/'
+PREFIX_STATIC_PATH = './upload/tmp/static/'
+
 
 app = Flask(__name__)
 global file_cut
@@ -119,11 +122,18 @@ def cal_file_sim(filename, theme):
                 result=True
             )
         except Exception:
+            print("Unexpected error:", sys.exc_info())
             return jsonify(
                 message='计算失败',
                 data='',
                 result=False
             )
+
+
+@app.route('/downloadFile', methods=['GET'])
+def download_file():
+    # 此处的filepath是文件的路径，但是文件必须存储在static文件夹下， 比如images\test.jpg
+    return app.send_static_file(PREFIX_STATIC_PATH)
 
 
 

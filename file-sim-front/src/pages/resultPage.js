@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {inject} from 'utils/mobx-react';
-import {Table, Row, Button, Tabs} from 'td-ui';
+import {Table, Row, Button, Tabs, Tooltip, Icon} from 'td-ui';
 import {Link, withRouter} from 'react-router-dom';
 import {toJS} from 'mobx';
 import '../styles/controllers.css';
@@ -21,6 +21,12 @@ class ResultPage extends Component {
 
     render() {
         const {toolUseStore} = this.props;
+        const tooltip_content = <ul style={{listStyleType: 'none'}}>
+            <li><span style={{color: 'red'}}>红色：有抄袭嫌疑</span></li>
+            <li><span style={{color: 'orange'}}>橙色：为无用值</span></li>
+            <li><span style={{color: 'green'}}>绿色：无抄袭嫌疑</span></li>
+
+        </ul>;
         return (<div>
             <Row style={{margin: '0 0 5% 0'}}>
                 <header style={{fontWeight: 'bold', fontSize: '1.3em', marginBottom: '2%'}}>查重结果
@@ -34,31 +40,47 @@ class ResultPage extends Component {
 
                 <Tabs>
                     <Tabs.TabPane tab="VSM结果" key="vsm">
-                        <Table rowKey="key" columns={toJS(toolUseStore.columnList)}
-                               dataSource={toJS(toolUseStore.vsmSource)}
-                               scroll={{x: toolUseStore.flexScroll}}
-                               bordered={true}/>
+                        <Table
+                            loading={toolUseStore.loading}
+                            rowKey="key" columns={toJS(toolUseStore.columnList)}
+                            dataSource={toJS(toolUseStore.vsmSource)}
+                            scroll={{x: toolUseStore.flexScroll}}
+                            bordered={true}/>
                     </Tabs.TabPane>
                     <Tabs.TabPane tab="LSI结果" key="lsi">
-                        <Table rowKey="key" columns={toJS(toolUseStore.columnList)}
-                               dataSource={toJS(toolUseStore.lsiSource)}
-                               scroll={{x: toolUseStore.flexScroll}}
-                               bordered={true}/>
+                        <Table
+                            loading={toolUseStore.loading}
+                            rowKey="key" columns={toJS(toolUseStore.columnList)}
+                            dataSource={toJS(toolUseStore.lsiSource)}
+                            scroll={{x: toolUseStore.flexScroll}}
+                            bordered={true}/>
                     </Tabs.TabPane>
                     <Tabs.TabPane tab="LDA结果" key="lda">
-                        <Table rowKey="key" columns={toJS(toolUseStore.columnList)}
-                               dataSource={toJS(toolUseStore.ldaSource)}
-                               scroll={{x: toolUseStore.flexScroll}}
-                               bordered={true}/>
+                        <Table
+                            loading={toolUseStore.loading}
+                            rowKey="key" columns={toJS(toolUseStore.columnList)}
+                            dataSource={toJS(toolUseStore.ldaSource)}
+                            scroll={{x: toolUseStore.flexScroll}}
+                            bordered={true}/>
                     </Tabs.TabPane>
                 </Tabs>
 
 
             </Row>
             <Row style={{margin: '0 0 5% 0'}}>
-                <header style={{fontWeight: 'bold', fontSize: '1.3em', marginBottom: '2%'}}>结果分析</header>
+                <header style={{fontWeight: 'bold', fontSize: '1.3em', marginBottom: '2%'}}>结果分析
+                    <Tooltip
+                        content={tooltip_content}
+                    ><Icon type="question-circle-o" style={{fontSize: 16}}/></Tooltip>
 
-                <p>结果分析 </p>
+                </header>
+
+                <Table
+                    loading={toolUseStore.loading}
+                    rowKey="key" columns={toJS(toolUseStore.columnList)}
+                    dataSource={toJS(toolUseStore.resultSource)}
+                    scroll={{x: toolUseStore.flexScroll}}
+                    bordered={true}/>
             </Row>
         </div>)
     }

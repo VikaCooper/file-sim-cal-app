@@ -17,7 +17,12 @@ class toolUseStore {
     @observable flexScroll = 0;
     @observable lsiSource = [];
     @observable ldaSource = [];
-    @observable resultSource =[];
+    @observable resultSource = [];
+    @observable singleResult = [];
+
+    constructor(store) {
+        this.globalStore = store;
+    }
 
     @action
     async uploadFile() {
@@ -36,12 +41,20 @@ class toolUseStore {
     }
 
     @action
+    async getRecordById(id) {
+        const url = '/getRecordById/' + id;
+        try {
+            const res = await Get(url);
+            if (res.result)
+                this.singleResult = res.data;
+        } catch (e) {
+            message.warning('请求异常');
+        }
+    }
+
+
+    @action
     async getFileList(filename, theme) {
-        this.resultData.clear();
-        this.vsmSource.clear();
-        this.columnList.clear();
-        this.lsiSource.clear();
-        this.ldaSource.clear();
 
 
         this.loading = true;
@@ -49,7 +62,7 @@ class toolUseStore {
         try {
             const res = await Get(url);
             this.resultData = res.data;
-            this.formatResultData();
+            [this.columnList, this.vsmSource, this.lsiSource, this.ldaSource, this.resultSource] = this.formatResultData(this.resultData);
             this.flexScroll = 150 * this.columnList.length;
 
             this.loading = false;
@@ -58,26 +71,31 @@ class toolUseStore {
         }
     }
 
-    formatResultData() {
-        this.columnList.push({
+    formatResultData(resultData) {
+        this.resultData.clear();
+        this.vsmSource.clear();
+        this.columnList.clear();
+        this.lsiSource.clear();
+        this.ldaSource.clear();
+        let column = [], vsmSrc, lsiSrc, ldaSrc, resultSrc = [];
+        column.push({
             key: 'stno',
             dataIndex: 'stno',
             title: '学号'
         });
-        this.columnList = this.columnList.concat(
-            this.resultData[0].vsm.map(item => {
-                console.log(item);
+        column = column.concat(
+            resultData[0].vsm.map(item => {
                 const key = Object.keys(item)[0];
                 return {
                     key: key,
                     dataIndex: key,
                     title: key,
-                    render: (text)=>{
+                    render: (text) => {
                         const value = parseFloat(text);
-                        if (value>0.5&&value<1){
+                        if (value > 0.5 && value < 1) {
                             return <span style={{color: 'red'}}>{text}</span>
                         }
-                        else if (value == 1){
+                        else if (value == 1) {
                             return <span style={{color: 'orange'}}>{text}</span>
                         }
                         else {
@@ -89,60 +107,68 @@ class toolUseStore {
         );
 
 
-        this.vsmSource = this.resultData[0].vsm.map(item => {
+        vsmSrc = resultData[0].vsm.map(item => {
             let obj = {};
-            for (let i = 0; i < this.columnList.length; i++) {
+            for (let i = 0; i < column.length; i++) {
                 let item_key = Object.keys(item)[0];
                 if (i == 0) {
                     obj.stno = item_key;
                 }
-                else obj[this.columnList[i].key] = item[item_key][i - 1];
+                else obj[column[i].key] = item[item_key][i - 1];
             }
             return obj;
         });
 
-        this.lsiSource = this.resultData[1].lsi.map(item => {
+        lsiSrc = resultData[1].lsi.map(item => {
             let obj = {};
-            for (let i = 0; i < this.columnList.length; i++) {
+            for (let i = 0; i < column.length; i++) {
                 let item_key = Object.keys(item)[0];
                 if (i == 0) {
                     obj.stno = item_key;
                 }
-                else obj[this.columnList[i].key] = item[item_key][i - 1];
+                else obj[column[i].key] = item[item_key][i - 1];
             }
             return obj;
         });
 
-        this.ldaSource = this.resultData[2].lda.map(item => {
+        ldaSrc = resultData[2].lda.map(item => {
             let obj = {};
-            for (let i = 0; i < this.columnList.length; i++) {
+            for (let i = 0; i < column.length; i++) {
                 let item_key = Object.keys(item)[0];
                 if (i == 0) {
                     obj.stno = item_key;
                 }
-                else obj[this.columnList[i].key] = item[item_key][i - 1];
+                else obj[column[i].key] = item[item_key][i - 1];
             }
             return obj;
         });
 
-        this.resultSource = this.resultData[3].result.map(item => {
-            let obj = {};
-            for (let i = 0; i < this.columnList.length; i++) {
-                let item_key = Object.keys(item)[0];
-                if (i == 0) {
-                    obj.stno = item_key;
+        if (resultData[3])
+            resultSrc = resultData[3].result.map(item => {
+                let obj = {};
+                for (let i = 0; i < column.length; i++) {
+                    let item_key = Object.keys(item)[0];
+                    if (i == 0) {
+                        obj.stno = item_key;
+                    }
+                    else obj[column[i].key] = item[item_key][i - 1];
                 }
-                else obj[this.columnList[i].key] = item[item_key][i - 1];
-            }
-            return obj;
-        });
+                return obj;
+            });
 
-        localStorage.setItem('vsm', [toJS(this.columnList), toJS(this.vsmSource)]);
-        localStorage.setItem('lsi', [toJS(this.columnList), toJS(this.lsiSource)]);
-        localStorage.setItem('lda', [toJS(this.columnList), toJS(this.ldaSource)]);
-        localStorage.setItem('result', [toJS(this.columnList), toJS(this.ldaSource)]);
-
+        return [
+            column, vsmSrc, lsiSrc, ldaSrc, resultSrc
+        ]
     }
+
+    showHistoryResult(result) {
+        const tmp = JSON.parse(result[0].result);
+
+        [this.columnList, this.vsmSource, this.lsiSource, this.ldaSource, this.resultSource] = this.formatResultData(tmp);
+        this.flexScroll = 150 * this.columnList.length;
+    }
+
+
 }
 
 export default toolUseStore;

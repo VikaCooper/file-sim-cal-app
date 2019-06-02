@@ -104,6 +104,7 @@ export class GlobalStore {
         }
     }
 
+
     static getInstance() { // 单例模式
         if (!GlobalStore.instance) {
             GlobalStore.instance = new GlobalStore();

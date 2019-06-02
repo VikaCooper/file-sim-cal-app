@@ -7,16 +7,14 @@ import os
 import jieba
 import sys
 
-
 PREFIX_COMPRESSED_PATH = './upload/tmp/compressed/'
 PREFIX_UNCOMPRESSED_PATH = './upload/tmp/uncompressed/'
 PREFIX_STATIC_PATH = './upload/tmp/static/'
 
-
 app = Flask(__name__)
 global file_cut
-user_name= ''
-user_type=''
+user_name = ''
+user_type = ''
 
 
 @app.route('/test')
@@ -136,7 +134,43 @@ def download_file():
     return app.send_static_file(PREFIX_STATIC_PATH)
 
 
+@app.route('/historysearch', methods=['GET', 'POST'])
+def history_search():
+    if request.method == 'POST':
+        try:
+            json_data = json.loads(request.get_data().decode("utf-8"))
+            result_data = dboperations.record_search(json_data)
+            return jsonify(
+                message='查询成功',
+                data=result_data,
+                result=True
+            )
+        except:
+            print("Unexpected error:", sys.exc_info())
+            return jsonify(
+                message='查询失败',
+                data=[],
+                result=False
+            )
 
+
+@app.route('/getRecordById/<recordId>', methods=['GET'])
+def get_record_by_id(recordId):
+    if request.method == 'GET':
+        try:
+            result_data = dboperations.record_by_id(recordId)
+            return jsonify(
+                message='查询成功',
+                data=result_data,
+                result=True
+            )
+        except:
+            print("Unexpected error:", sys.exc_info())
+            return jsonify(
+                message='查询失败',
+                data=[],
+                result=False
+            )
 
 # 解压上传的文件
 def term_uncompress(file_path, theme):

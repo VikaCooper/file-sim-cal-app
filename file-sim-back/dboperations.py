@@ -1,7 +1,7 @@
 import dbconnector
 import uuid
 import datetime
-from json import dumps,loads
+from json import dumps, loads
 from flask import session
 import sys
 
@@ -73,10 +73,10 @@ def result_insert(result):
             username = session['username']
             usertype = session['usertype']
 
-            print(dumps({"result":result}))
+            print(dumps({"result": result}))
             sql = """insert into user_history (record_id,username,usertype,cal_time,result) VALUES (%s,%s,%s,%s,%s)"""
             result = cursor.execute(sql,
-                     (str(uuid.uuid4()), username, usertype, str(curr_time), dumps(result))
+                                    (str(uuid.uuid4()), username, usertype, str(curr_time), dumps(result))
                                     )
             conn.commit()
             return result
@@ -85,5 +85,44 @@ def result_insert(result):
     finally:
         conn.close()
 
+
+def record_search(date_strings):
+    if not date_strings[0]:
+        date_strings[0] = '2019/01/01'
+    if not date_strings[1]:
+        date_strings[1] = datetime.datetime.now().strftime('%Y/%m/%d')
+    print('in date string: ', date_strings)
+    conn = dbconnector.connect_db()
+    try:
+        with conn.cursor() as cursor:
+            sql = """
+            SELECT * from user_history WHERE unix_timestamp(cal_time) BETWEEN unix_timestamp(%s) 
+            and unix_timestamp(%s);
+            """
+            cursor.execute(sql, (date_strings[0], date_strings[1]))
+            result = cursor.fetchall()
+            return result
+    except Exception:
+        print("Unexpected error:", sys.exc_info())
+    finally:
+        conn.close()
+
+
+def record_by_id(record_id):
+    conn = dbconnector.connect_db()
+    try:
+        with conn.cursor() as cursor:
+            sql = """
+            SELECT result from user_history WHERE record_id = %s;
+            """
+            cursor.execute(sql, (record_id))
+            result = cursor.fetchall()
+            print(result)
+            return result
+    except Exception:
+        print("Unexpected error:", sys.exc_info())
+    finally:
+        conn.close()
+
 # if __name__ == '__main__':
-#     result_insert()
+#     record_by_id('052eeab3-a1e4-4c66-b98b-de10d394f12d')

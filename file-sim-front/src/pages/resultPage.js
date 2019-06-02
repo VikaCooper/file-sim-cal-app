@@ -11,13 +11,19 @@ class ResultPage extends Component {
         super(props)
     }
 
-    // componentWillMount(){
-    //     const {toolUseStore} = this.props;
-    //     if(localStorage.getItem('vsm')){
-    //         toolUseStore.columnList = localStorage.getItem('vsm')[0];
-    //         toolUseStore.dataSource = localStorage.getItem('vsm')[1];
-    //     }
-    // }
+    componentWillMount(){
+        const {toolUseStore} = this.props;
+        const recordId =window.location.hash.split('?')[1];
+        if (recordId){
+            toolUseStore.getRecordById(recordId.split('=')[1]).then(
+                (success)=>{
+                    toolUseStore.showHistoryResult(
+                        toolUseStore.singleResult
+                    );
+                }
+            );
+        }
+    }
 
     render() {
         const {toolUseStore} = this.props;

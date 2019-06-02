@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {inject} from 'utils/mobx-react';
-import {Table, Row, Button, Tabs, Tooltip, Icon} from 'td-ui';
+import {Table, Row, Button, Tabs, Tooltip, Icon, Dialog} from 'td-ui';
 import {Link, withRouter} from 'react-router-dom';
 import {toJS} from 'mobx';
 import '../styles/controllers.css';
@@ -11,12 +11,12 @@ class ResultPage extends Component {
         super(props)
     }
 
-    componentWillMount(){
+    componentWillMount() {
         const {toolUseStore} = this.props;
-        const recordId =window.location.hash.split('?')[1];
-        if (recordId){
+        const recordId = window.location.hash.split('?')[1];
+        if (recordId) {
             toolUseStore.getRecordById(recordId.split('=')[1]).then(
-                (success)=>{
+                (success) => {
                     toolUseStore.showHistoryResult(
                         toolUseStore.singleResult
                     );
@@ -37,7 +37,35 @@ class ResultPage extends Component {
             <Row style={{margin: '0 0 5% 0'}}>
                 <header style={{fontWeight: 'bold', fontSize: '1.3em', marginBottom: '2%'}}>查重结果
                     <span style={{float: 'right'}}>
-                    <Button type="primary">下载结果</Button>
+                    <Button type="primary"
+                            onClick={
+                                () => {
+
+                                    toolUseStore.createResultExcel().then(
+                                        (success) => {
+
+                                            if (toolUseStore.isCreated){
+                                                  Dialog.confirm(
+                                                {
+                                                    title: '保存文件',
+                                                    content: '结果文件生成成功，是否保存到本地？',
+                                                    onOk: () => {
+                                                        toolUseStore.getResultPic();
+                                                    },
+                                                    maskClosable: true
+                                                }
+                                            );
+                                            }
+
+
+                                        }
+                                    );
+
+                                }
+                            }
+
+
+                    >下载结果</Button>
                 </span>
 
 

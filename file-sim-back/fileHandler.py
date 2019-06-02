@@ -105,19 +105,23 @@ def result_format(file_cut, result_list):
         result.append({x: tmp_y})
     return result
 
+
 ############################
 ############################
-# 生成Excel文件
+# 生成excel表格
 ############################
 ############################
 
-# def write2excel(result):
-#     wb = xlwt.Workbook()
-#     vsm_sheet = wb.add_sheet('vsm')
-#     vsm_result = result[0].get('vsm')
-#     columns = []
-#     for vr in vsm_result:
-#         columns.append(list(vr.keys())[0])
+def create_excel(excel_data):
+    wb = xlwt.Workbook()
+    vsm_sheet = wb.add_sheet('vsm_result')
+    lsi_sheet = wb.add_sheet('lsi_result')
+    lda_sheet = wb.add_sheet('lda_result')
+    result_sheet = wb.add_sheet('result_result')
+    print(excel_data)
+
+
+
 
 def cal_api(file_cut):
     return cal_process(file_cut)

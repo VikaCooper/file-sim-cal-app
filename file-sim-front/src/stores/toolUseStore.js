@@ -19,6 +19,8 @@ class toolUseStore {
     @observable ldaSource = [];
     @observable resultSource = [];
     @observable singleResult = [];
+    @observable isCreated = false;
+    currData = {};
 
     constructor(store) {
         this.globalStore = store;
@@ -42,11 +44,14 @@ class toolUseStore {
 
     @action
     async getRecordById(id) {
+        this.loading = true;
         const url = '/getRecordById/' + id;
         try {
             const res = await Get(url);
             if (res.result)
                 this.singleResult = res.data;
+            this.loading = false;
+
         } catch (e) {
             message.warning('请求异常');
         }
@@ -55,8 +60,7 @@ class toolUseStore {
 
     @action
     async getFileList(filename, theme) {
-
-
+        this.resultData.clear();
         this.loading = true;
         const url = '/getFileList/' + filename + '&' + theme;
         try {
@@ -64,7 +68,6 @@ class toolUseStore {
             this.resultData = res.data;
             [this.columnList, this.vsmSource, this.lsiSource, this.ldaSource, this.resultSource] = this.formatResultData(this.resultData);
             this.flexScroll = 150 * this.columnList.length;
-
             this.loading = false;
         } catch (e) {
             return false;
@@ -72,12 +75,11 @@ class toolUseStore {
     }
 
     formatResultData(resultData) {
-        this.resultData.clear();
         this.vsmSource.clear();
         this.columnList.clear();
         this.lsiSource.clear();
         this.ldaSource.clear();
-        let column = [], vsmSrc, lsiSrc, ldaSrc, resultSrc = [];
+        let column = [], vsmSrc, lsiSrc, ldaSrc, resultSrc ;
         column.push({
             key: 'stno',
             dataIndex: 'stno',
@@ -143,18 +145,17 @@ class toolUseStore {
             return obj;
         });
 
-        if (resultData[3])
-            resultSrc = resultData[3].result.map(item => {
-                let obj = {};
-                for (let i = 0; i < column.length; i++) {
-                    let item_key = Object.keys(item)[0];
-                    if (i == 0) {
-                        obj.stno = item_key;
-                    }
-                    else obj[column[i].key] = item[item_key][i - 1];
+        resultSrc = resultData[3].result.map(item => {
+            let obj = {};
+            for (let i = 0; i < column.length; i++) {
+                let item_key = Object.keys(item)[0];
+                if (i == 0) {
+                    obj.stno = item_key;
                 }
-                return obj;
-            });
+                else obj[column[i].key] = item[item_key][i - 1];
+            }
+            return obj;
+        });
 
         return [
             column, vsmSrc, lsiSrc, ldaSrc, resultSrc
@@ -163,11 +164,36 @@ class toolUseStore {
 
     showHistoryResult(result) {
         const tmp = JSON.parse(result[0].result);
-
         [this.columnList, this.vsmSource, this.lsiSource, this.ldaSource, this.resultSource] = this.formatResultData(tmp);
         this.flexScroll = 150 * this.columnList.length;
     }
 
+    @action
+    async createResultExcel(){
+
+        if (this.resultData.length!==0)
+            this.currData.result = toJS(this.resultData);
+        else
+            this.currData.result = toJS(this.singleResult[0].result);
+        this.currData.column = toJS(this.columnList);
+
+        const url = '/createExcel';
+        try {
+            const res = await PostJson(url,this.currData);
+            if (!res.result){
+                message.warning(res.message);
+            }
+            this.isCreated = res.result;
+            return res.result;
+        }catch (e){
+            message.warning('请求异常')
+        }
+    }
+    @action
+    async getResultExcel(){
+        const url = '/downloadExcel';
+        window.open(url);
+    }
 
 }
 

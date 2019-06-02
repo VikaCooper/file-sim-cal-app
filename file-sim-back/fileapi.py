@@ -1,5 +1,5 @@
 from flask import Flask, jsonify
-from flask import request, session
+from flask import request, session, make_response, send_from_directory
 import json
 import dboperations
 import fileHandler
@@ -128,10 +128,28 @@ def cal_file_sim(filename, theme):
             )
 
 
-@app.route('/downloadFile', methods=['GET'])
-def download_file():
-    # 此处的filepath是文件的路径，但是文件必须存储在static文件夹下， 比如images\test.jpg
-    return app.send_static_file(PREFIX_STATIC_PATH)
+@app.route('/createExcel', methods=['POST'])
+def create_pic():
+    if request.method == 'POST':
+        try:
+            json_data = json.loads(request.get_data().decode('utf-8'))
+            fileHandler.create_excel(json_data)
+            return jsonify(
+                message='生成表格成功',
+                result=True
+            )
+        except:
+            print("Unexpected error:", sys.exc_info())
+            return jsonify(
+                message='生成表格失败',
+                result=False
+            )
+
+
+@app.route('/downloadExcel', methods=['GET'])
+def download_pic():
+    response = make_response(send_from_directory(PREFIX_STATIC_PATH, 'result.xls', as_attachment=True))
+    return response
 
 
 @app.route('/historysearch', methods=['GET', 'POST'])
@@ -171,6 +189,7 @@ def get_record_by_id(recordId):
                 data=[],
                 result=False
             )
+
 
 # 解压上传的文件
 def term_uncompress(file_path, theme):

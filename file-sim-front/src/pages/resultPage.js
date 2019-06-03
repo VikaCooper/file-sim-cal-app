@@ -23,6 +23,15 @@ class ResultPage extends Component {
                 }
             );
         }
+        else if(localStorage.getItem('recordId')){
+            toolUseStore.getRecordById(localStorage.getItem('recordId')).then(
+                (success) => {
+                    toolUseStore.showHistoryResult(
+                        toolUseStore.singleResult
+                    );
+                }
+            );
+        }
     }
 
     render() {
@@ -50,7 +59,7 @@ class ResultPage extends Component {
                                                     title: '保存文件',
                                                     content: '结果文件生成成功，是否保存到本地？',
                                                     onOk: () => {
-                                                        toolUseStore.getResultPic();
+                                                        toolUseStore.getResultExcel();
                                                     },
                                                     maskClosable: true
                                                 }

@@ -74,7 +74,7 @@ class HistorySearch extends Component {
 
                 <Row>
                     <Table rowKey="num" columns={this.column}
-                           dataSource = {historySearchStore.dataSource}
+                           dataSource = {toJS(historySearchStore.dataSource)}
                            bordered={true}/>
                 </Row>
             </div>

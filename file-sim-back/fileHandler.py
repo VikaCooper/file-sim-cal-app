@@ -1,5 +1,6 @@
 from gensim import corpora, models, similarities
 import xlwt
+import os
 
 
 ############################
@@ -113,15 +114,46 @@ def result_format(file_cut, result_list):
 ############################
 
 def create_excel(excel_data):
+    try:
+        os.remove('./upload/tmp/static/result.xls')
+    except FileNotFoundError:
+        print('结果文档已为空')
     wb = xlwt.Workbook()
     vsm_sheet = wb.add_sheet('vsm_result')
     lsi_sheet = wb.add_sheet('lsi_result')
     lda_sheet = wb.add_sheet('lda_result')
     result_sheet = wb.add_sheet('result_result')
-    print(excel_data)
+    column = excel_data.get('column')[1:]
+    result = excel_data.get('result')
 
+    i = 1
+    for item in column:
+        vsm_sheet.write(0, i, item.get('key'))
+        vsm_sheet.write(i, 0, item.get('key'))
+        lsi_sheet.write(0, i, item.get('key'))
+        lsi_sheet.write(i, 0, item.get('key'))
+        lda_sheet.write(0, i, item.get('key'))
+        lda_sheet.write(i, 0, item.get('key'))
+        result_sheet.write(0, i, item.get('key'))
+        result_sheet.write(i, 0, item.get('key'))
+        i += 1
 
+    i = 1
+    j = 1
+    for vsm, col in zip(result[0]['vsm'], column):
+        for item in vsm.get(col.get('key')):
+            vsm_sheet.write(i, j, item)
+            lsi_sheet.write(i, j, item)
+            lda_sheet.write(i, j, item)
+            result_sheet.write(i, j, item)
+            j += 1
+        j = 1
+        i += 1
+
+    wb.save('./upload/tmp/static/result.xls')
 
 
 def cal_api(file_cut):
     return cal_process(file_cut)
+
+

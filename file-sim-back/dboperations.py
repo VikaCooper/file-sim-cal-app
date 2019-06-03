@@ -72,14 +72,15 @@ def result_insert(result):
             curr_time = datetime.datetime.now().strftime('%Y/%m/%d')
             username = session['username']
             usertype = session['usertype']
+            record_id = str(uuid.uuid4());
 
             print(dumps({"result": result}))
             sql = """insert into user_history (record_id,username,usertype,cal_time,result) VALUES (%s,%s,%s,%s,%s)"""
-            result = cursor.execute(sql,
-                                    (str(uuid.uuid4()), username, usertype, str(curr_time), dumps(result))
+            cursor.execute(sql,
+                                    (record_id, username, usertype, str(curr_time), dumps(result))
                                     )
             conn.commit()
-            return result
+            return record_id
     except Exception:
         print("Unexpected error:", sys.exc_info())
     finally:

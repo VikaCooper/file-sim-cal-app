@@ -113,10 +113,11 @@ def cal_file_sim(filename, theme):
             file_cut = get_file_cut(filename, theme)
             dboperations.file_cut_insert(file_cut)
             result = fileHandler.cal_api(file_cut)
-            dboperations.result_insert(result)
+            record_id = dboperations.result_insert(result)
             return jsonify(
                 message='计算成功',
                 data=result,
+                recordId=record_id,
                 result=True
             )
         except Exception:

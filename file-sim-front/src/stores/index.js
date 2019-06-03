@@ -73,6 +73,7 @@ export class GlobalStore {
                 message.info(res.data);
                 localStorage.removeItem('username');
                 localStorage.removeItem('usertype');
+                localStorage.removeItem('recordId');
                 setTimeout(()=>{
                     window.location.href='#/homepage';
                 },2000);

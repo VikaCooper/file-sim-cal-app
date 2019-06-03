@@ -60,12 +60,14 @@ class toolUseStore {
 
     @action
     async getFileList(filename, theme) {
+        localStorage.removeItem('recordId');
         this.resultData.clear();
         this.loading = true;
         const url = '/getFileList/' + filename + '&' + theme;
         try {
             const res = await Get(url);
             this.resultData = res.data;
+            localStorage.setItem('recordId',res.recordId);
             [this.columnList, this.vsmSource, this.lsiSource, this.ldaSource, this.resultSource] = this.formatResultData(this.resultData);
             this.flexScroll = 150 * this.columnList.length;
             this.loading = false;
@@ -94,7 +96,7 @@ class toolUseStore {
                     title: key,
                     render: (text) => {
                         const value = parseFloat(text);
-                        if (value > 0.5 && value < 1) {
+                        if (value > 0.6 && value < 1) {
                             return <span style={{color: 'red'}}>{text}</span>
                         }
                         else if (value == 1) {

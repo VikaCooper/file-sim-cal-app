@@ -78,6 +78,7 @@ export class GlobalStore {
                 localStorage.removeItem('recordId');
                 setTimeout(()=>{
                     window.location.href='#/homepage';
+                    window.location.reload();
                 },2000);
             }
             else {

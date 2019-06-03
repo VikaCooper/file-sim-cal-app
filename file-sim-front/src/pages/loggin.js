@@ -20,7 +20,12 @@ class Loggin extends Component {
         getFieldDecorator('username');
         getFieldDecorator('password');
         return (
-            <div>
+            <div style={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                padding: '50px 0 0 0'
+            }}>
 
                 <Tabs className={'box'} defaultActiveKey="login" type="card">
                     <Tabs.TabPane tab="登录" key="login">

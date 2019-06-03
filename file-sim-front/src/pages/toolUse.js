@@ -18,7 +18,7 @@ class ToolUse extends Component {
 
     componentWillMount() {
         this.props.globalStore.getCurrLocation();
-        localStorage.removeItem('recordId')
+        localStorage.removeItem('recordId');
     }
 
     render() {
@@ -58,7 +58,7 @@ class ToolUse extends Component {
                             <Upload accept={
                                 ["zip", "rar", 'doc', 'docx', 'pdf']
                             }
-                                    note='选择需要上传的压缩包'
+                                    note='选择需要上传的文件'
                                     showType="name"
                                     fileList={toolUseStore.fileList}
                                     onChange={(file) => {

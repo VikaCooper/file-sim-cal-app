@@ -1,6 +1,7 @@
 from gensim import corpora, models, similarities
 import xlwt
 import os
+import dboperations
 
 
 ############################
@@ -88,6 +89,44 @@ def cal_process(file_cut):
     ]
 
 
+def cal_process_student(doc_cut):
+    all_models = dboperations.records_all()
+    file_cut = []
+    for model in all_models:
+        file_cut.append({
+            'filename': model.get('doc_id'),
+            'seg': model.get('doc_slices').split(',')
+        })
+    bag_words = bag_of_words(file_cut)
+    corpus = bag_words[0]
+    dictionary = bag_words[1]
+    corpus_tfidf = tf_idf_value(corpus)
+    vsm_model = cal_sim_by_vsm(corpus_tfidf, corpus)
+
+    query_bow = dictionary.doc2bow(doc_cut[0].get('seg'))
+    query_vsm = vsm_model[query_bow]
+
+    vsm_result = []
+    vsm_tmp = []
+
+    for d, result in zip(file_cut,query_vsm):
+        vsm_tmp.append({d.get('filename'): str(round(result,3))})
+
+    value_tmp = []
+
+    for result in vsm_tmp:
+        key = str(list(result.keys())[0])
+        if result[key] not in value_tmp and float(result[key])>0.3:
+            vsm_result.append(result)
+            value_tmp.append(result[key])
+        else:
+            continue
+    print(vsm_result)
+    return vsm_result
+
+
+
+
 ############################
 ############################
 # 处理得到的结果
@@ -153,7 +192,10 @@ def create_excel(excel_data):
     wb.save('./upload/tmp/static/result.xls')
 
 
-def cal_api(file_cut):
-    return cal_process(file_cut)
+def cal_api(file_cut, t):
+    if t=='t':
+        return cal_process(file_cut)
+    else:
+        return cal_process_student(file_cut)
 
 

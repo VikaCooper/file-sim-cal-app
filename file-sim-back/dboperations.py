@@ -125,5 +125,21 @@ def record_by_id(record_id):
     finally:
         conn.close()
 
+
+def records_all():
+    conn = dbconnector.connect_db()
+    try:
+        with conn.cursor() as cursor:
+            sql = """
+               SELECT doc_id, doc_slices from doc_models;
+               """
+            cursor.execute(sql)
+            result = cursor.fetchall()
+            return result
+    except Exception:
+        print("Unexpected error:", sys.exc_info())
+    finally:
+        conn.close()
+
 # if __name__ == '__main__':
 #     record_by_id('052eeab3-a1e4-4c66-b98b-de10d394f12d')

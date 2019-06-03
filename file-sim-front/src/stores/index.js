@@ -12,6 +12,7 @@ export class GlobalStore {
 
     @observable loading = false; // 加载状态，加observable修饰表示此属性值的变化会引起页面的更新
     @observable username;
+    @observable usertype;
     @observable realName;
     @observable currLocation = 'homepage';
 
@@ -48,6 +49,7 @@ export class GlobalStore {
                 localStorage.setItem('username',userInput.username);
                 localStorage.setItem('usertype',userInput.usertype);
                 this.username = userInput.username;
+                this.usertype = userInput.usertype;
                 setTimeout(()=>{
                     window.location.href='#/homepage';
                 },2000);

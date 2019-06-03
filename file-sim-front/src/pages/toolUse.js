@@ -3,6 +3,7 @@ import {inject} from 'utils/mobx-react';
 import {Button, Row, Form, Input, Upload} from 'td-ui';
 import {withRouter} from 'react-router-dom';
 import '../styles/controllers.css';
+import {toJS} from 'mobx';
 
 const FormItem = Form.Item;
 const FormControl = Form.Control;
@@ -17,6 +18,7 @@ class ToolUse extends Component {
 
     componentWillMount() {
         this.props.globalStore.getCurrLocation();
+        localStorage.removeItem('recordId')
     }
 
     render() {
@@ -53,7 +55,9 @@ class ToolUse extends Component {
                                 message: '压缩文档未上传！'
                             }]}
                             name="fileUpload">
-                            <Upload accept={["zip", "rar", "gzip"]}
+                            <Upload accept={
+                                ["zip", "rar", 'doc', 'docx', 'pdf']
+                            }
                                     note='选择需要上传的压缩包'
                                     showType="name"
                                     fileList={toolUseStore.fileList}
@@ -68,20 +72,28 @@ class ToolUse extends Component {
                 <Row type={'flex'} justify={'center'}>
                     <Button type='primary' style={{marginRight: '20px'}}
                             onClick={() => {
-                        this.props.form.validateFields((errors, values) => {
-                            if (!errors) {
-                                toolUseStore.uploadFile().then(
-                                    (success) => {
-                                        if (success)
-                                            toolUseStore.getFileList(toolUseStore.fileList.name, values.theme);
+                                this.props.form.validateFields((errors, values) => {
+                                    if (!errors) {
+                                        toolUseStore.uploadFile().then(
+                                            (success) => {
+                                                const extendName = toJS(toolUseStore.fileList.name).split('.')[1];
+                                                if (extendName == 'doc' || extendName == 'docx' || extendName == 'pdf') {
+                                                    toolUseStore.fileType = 'doc';
+                                                    toolUseStore.getSingleDoc(toolUseStore.fileList.name, values.theme)
+                                                }
+                                                else {
+                                                    toolUseStore.fileType = 'pack';
+                                                    toolUseStore.getFileList(toolUseStore.fileList.name, values.theme);
 
+                                                }
+
+                                            }
+                                        );
+                                        window.location.href = '/#/resultPage';
                                     }
-                                );
-                                window.location.href = '/#/resultPage';
-                            }
 
-                        })
-                    }}>确认提交</Button>
+                                })
+                            }}>确认提交</Button>
                     <Button type='warning' onClick={
                         () => {
                             this.props.form.resetFields();

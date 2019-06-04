@@ -101,16 +101,15 @@ class ResultPage extends Component {
                     <Tabs.TabPane tab="VSM结果" key="vsm">
                         <Table
                             loading={toolUseStore.loading}
-                            rowKey={(record) => {
-                                return record.key;
-                            }} columns={
+                            rowKey={record => record.key}
+                            columns={
                                 toolUseStore.fileType ==='doc'?
                                     columns:
                                 toJS(toolUseStore.columnList)
                             }
                              dataSource={
                                  toolUseStore.fileType ==='doc'?
-                                    toJS(toolUseStore.docResult)
+                                    toJS(toolUseStore.docSource)
                                      :
                                  toJS(toolUseStore.vsmSource)
                              }

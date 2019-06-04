@@ -94,19 +94,22 @@ class toolUseStore {
         try {
             const res = await Get(url);
             this.docResult = res.data;
-            localStorage.setItem('recordId', res.recordId);
+            // localStorage.setItem('recordId', res.recordId);
             let i = 0;
-            this.docSource= this.docResult.map(
+            if (res.result){
+                 this.docSource= this.docResult.map(
                 item => {
                     const key = Object.keys(item)[0];
                     return {
                         key: key,
                         num: i++,
                         docId: key,
-                        simResult: item[key]
+                        simResult: item[key],
                     }
                 }
             );
+            }
+
 
             console.log('doc Source: ',toJS(this.docSource));
             this.loading = false;
